@@ -11,3 +11,9 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
+# PDFs
+*.pdf
+
+# TMP save files
+*~

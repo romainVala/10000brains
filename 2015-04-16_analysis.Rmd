@@ -1,0 +1,61 @@
+---
+title: "Principal Componenat Analysis of 10k histograms"
+author: "Romain Valabregue & Vincent Perlbarg & Vincent Guillemot & Arthur Tenenhaus"
+date: "16/04/2015"
+output: pdf_document
+header-includes: \usepackage{graphicx}
+---
+
+This short analysis shows an Principal Component Analysis on histograms.
+
+```{r preambule, echo=FALSE, message=FALSE}
+require(signal) #for function interp1 in histo normalisation
+```
+
+# The data-set
+
+There are 4 variables in the histogram data-set:
+
+ * `histoMatY`: dim $n \times 512$ each line is the amplitude of the histogram (density);
+ * `histoMatX`: dim $n \times 512$ each line is the $x$ axis of the histogram (range of value in each volume);
+ * `meanSignal`: a normalisation factor for each sujbect (the mean value of gray and white voxel in the brain);
+ * `fa`: a string that gives the path of each subject data .
+
+```{r read_histo, echo=FALSE}
+load(file.path("~","10kbrains","histo_matrix.Rdata"))
+```
+
+
+```{r normhisto, echo=FALSE}
+new_X <- seq(0.5,150,0.5)
+new_Y <-  matrix(NA, nrow=nrow(histoMatX), ncol=length(new_X))
+#y2= matrix(,nrow=nrow(histoMatX),ncol=length(xx))
+
+for (k in seq(1,nrow(histoMatX)) ) {
+  y=histoMatY[k,]
+  x=histoMatX[k,]
+  #scale x for intensity  with mean gray/white intensity
+  x2 = x/meanSignal[k]*100  
+  #interpolate to have the same x sample
+  y2 = interp1(x2,y,new_X)    
+  #the extremite of the histogram (max of x) varie, so put zero if not defined
+  y2[is.na(y2)]=0    
+  new_Y[k,] = y2    
+}
+```
+
+# Principal Component Analysis
+
+
+Figure \ref{fig:plotpca} shows the first two components of a PCA applied to the normalized histograms.
+
+```{r pca, echo=FALSE}
+Hy <- new_Y
+rpca <- princomp(Hy, cor=TRUE)
+```
+
+```{r plotpca, echo=FALSE, fig.cap="The first two components.", fig.align="center"}
+plot(rpca$scores[,1], rpca$scores[,2], pch=16, 
+     xlab="First Component", ylab="Second Component")
+```
+
