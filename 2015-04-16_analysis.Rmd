@@ -6,8 +6,8 @@ output: pdf_document
 header-includes: \usepackage{graphicx}
 ---
 
-This short analysis shows an Principal Component Analysis on histograms.
-g
+This short analysis shows a Principal Component Analysis on histograms.
+The histograms were obtained directly on the pre-processed images.
 
 ```{r preambule, echo=FALSE, message=FALSE}
 require(signal) #for function interp1 in histo normalisation
